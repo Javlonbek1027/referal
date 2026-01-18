@@ -1,28 +1,43 @@
-import { Card, Typography } from 'antd';
+import { Card, Typography, Grid } from 'antd';
 import LoginForm from '../components/Auth/LoginForm';
 
 const { Title } = Typography;
+const { useBreakpoint } = Grid;
 
 const LoginPage: React.FC = () => {
+  const screens = useBreakpoint();
+  const isMobile = !screens.sm;
+
   return (
     <div 
-      className="min-h-screen flex items-center justify-center"
+      className="min-h-screen flex items-center justify-center p-4"
       style={{
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
       }}
     >
-      <Card className="w-full max-w-md shadow-2xl">
-        <div className="text-center mb-6">
-          <div className="w-40 h-40 mx-auto mb-4 flex items-center justify-center">
+      <Card 
+        className="w-full shadow-2xl"
+        style={{ maxWidth: isMobile ? '100%' : 420 }}
+        bodyStyle={{ padding: isMobile ? 16 : 24 }}
+      >
+        <div className="text-center mb-4 md:mb-6">
+          <div 
+            className="mx-auto mb-3 md:mb-4 flex items-center justify-center"
+            style={{ 
+              width: isMobile ? 100 : 140, 
+              height: isMobile ? 100 : 140 
+            }}
+          >
             <img 
               src="/images/logo.svg" 
               alt="Logo" 
               className="w-full h-full object-contain"
-              style={{ maxWidth: '100%', maxHeight: '100%' }}
             />
           </div>
-          <Title level={2} className="!mb-2">Referral Market System</Title>
-          <Typography.Text type="secondary">
+          <Title level={isMobile ? 4 : 3} className="!mb-1 md:!mb-2">
+            Referral Market System
+          </Title>
+          <Typography.Text type="secondary" className="text-xs md:text-sm">
             Tizimga kirish uchun telefon raqam va parolni kiriting
           </Typography.Text>
         </div>

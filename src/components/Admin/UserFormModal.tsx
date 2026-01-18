@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
-import { Modal, Form, Input, Select, InputNumber, message } from 'antd';
+import { Modal, Form, Input, Select, InputNumber, message, Grid } from 'antd';
 import type { User } from '../../types';
 import { userService } from '../../services/userService';
+
+const { useBreakpoint } = Grid;
 
 interface UserFormModalProps {
   open: boolean;
@@ -21,6 +23,8 @@ interface FormValues {
 const UserFormModal: React.FC<UserFormModalProps> = ({ open, user, users, onClose }) => {
   const [form] = Form.useForm<FormValues>();
   const isEditing = !!user;
+  const screens = useBreakpoint();
+  const isMobile = !screens.sm;
 
   useEffect(() => {
     if (open) {
@@ -78,17 +82,19 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, user, users, onClos
 
   return (
     <Modal
-      title={isEditing ? 'Foydalanuvchini tahrirlash' : 'Yangi foydalanuvchi'}
+      title={<span className="text-sm md:text-base">{isEditing ? 'Foydalanuvchini tahrirlash' : 'Yangi foydalanuvchi'}</span>}
       open={open}
       onOk={handleSubmit}
       onCancel={onClose}
       okText={isEditing ? 'Saqlash' : 'Yaratish'}
-      cancelText="Bekor qilish"
+      cancelText="Bekor"
+      width={isMobile ? '95%' : 480}
+      centered={isMobile}
     >
-      <Form form={form} layout="vertical" className="mt-4">
+      <Form form={form} layout="vertical" className="mt-3 md:mt-4" size={isMobile ? 'middle' : 'large'}>
         <Form.Item
           name="name"
-          label="Ism"
+          label={<span className="text-xs md:text-sm">Ism</span>}
           rules={[{ required: true, message: 'Ismni kiriting!' }]}
         >
           <Input placeholder="Foydalanuvchi ismi" />
@@ -96,7 +102,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, user, users, onClos
 
         <Form.Item
           name="phone"
-          label="Telefon raqam"
+          label={<span className="text-xs md:text-sm">Telefon raqam</span>}
           rules={[
             { required: true, message: 'Telefon raqamni kiriting!' },
             { pattern: /^\+998\d{9}$/, message: 'Format: +998XXXXXXXXX' },
@@ -108,7 +114,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, user, users, onClos
         {!isEditing && (
           <Form.Item
             name="password"
-            label="Parol"
+            label={<span className="text-xs md:text-sm">Parol</span>}
             rules={[{ required: true, message: 'Parolni kiriting!' }]}
           >
             <Input.Password placeholder="Parol" />
@@ -117,7 +123,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, user, users, onClos
 
         <Form.Item
           name="referrer_phone"
-          label="Referrer (ixtiyoriy)"
+          label={<span className="text-xs md:text-sm">Referrer (ixtiyoriy)</span>}
         >
           <Select
             placeholder="Referrer tanlang"
@@ -135,7 +141,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ open, user, users, onClos
 
         <Form.Item
           name="referral_limit"
-          label="Referral limiti"
+          label={<span className="text-xs md:text-sm">Referral limiti</span>}
           rules={[{ required: true, message: 'Limitni kiriting!' }]}
         >
           <InputNumber min={1} max={10} className="w-full" />

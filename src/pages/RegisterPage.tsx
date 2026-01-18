@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Card, Form, Input, Button, Alert, message, Typography } from 'antd';
+import { Card, Form, Input, Button, Alert, message, Typography, Grid } from 'antd';
 import { PhoneOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { userService } from '../services/userService';
 
 const { Title, Text } = Typography;
+const { useBreakpoint } = Grid;
 
 interface RegisterFormValues {
   name: string;
@@ -20,11 +21,12 @@ const RegisterPage: React.FC = () => {
   const [referrerName, setReferrerName] = useState<string | null>(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const screens = useBreakpoint();
+  const isMobile = !screens.sm;
 
   useEffect(() => {
     const refId = searchParams.get('ref');
     if (refId) {
-      // Fetch referrer info
       userService.getUserById(refId).then((user) => {
         if (user) {
           setReferrerPhone(user.phone);
@@ -62,23 +64,34 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center"
+      className="min-h-screen flex items-center justify-center p-4"
       style={{
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
       }}
     >
-      <Card className="w-full max-w-md shadow-2xl">
-        <div className="text-center mb-6">
-          <div className="w-40 h-40 mx-auto mb-4 flex items-center justify-center">
+      <Card 
+        className="w-full shadow-2xl"
+        style={{ maxWidth: isMobile ? '100%' : 420 }}
+        bodyStyle={{ padding: isMobile ? 16 : 24 }}
+      >
+        <div className="text-center mb-4 md:mb-6">
+          <div 
+            className="mx-auto mb-3 md:mb-4 flex items-center justify-center"
+            style={{ 
+              width: isMobile ? 100 : 140, 
+              height: isMobile ? 100 : 140 
+            }}
+          >
             <img 
               src="/images/logo.svg" 
               alt="Logo" 
               className="w-full h-full object-contain"
-              style={{ maxWidth: '100%', maxHeight: '100%' }}
             />
           </div>
-          <Title level={2} className="!mb-2">Ro'yxatdan o'tish</Title>
-          <Text type="secondary">
+          <Title level={isMobile ? 4 : 3} className="!mb-1 md:!mb-2">
+            Ro'yxatdan o'tish
+          </Title>
+          <Text type="secondary" className="text-xs md:text-sm">
             Yangi hisob yarating
           </Text>
         </div>
@@ -86,10 +99,10 @@ const RegisterPage: React.FC = () => {
         {referrerName && (
           <Alert
             message={`${referrerName} sizni taklif qildi!`}
-            description="Ro'yxatdan o'tganingizda siz va taklif qiluvchi bonus olasiz."
+            description={isMobile ? undefined : "Ro'yxatdan o'tganingizda siz va taklif qiluvchi bonus olasiz."}
             type="success"
             showIcon
-            className="mb-4"
+            className="mb-3 md:mb-4"
           />
         )}
 
@@ -98,7 +111,7 @@ const RegisterPage: React.FC = () => {
             message={error}
             type="error"
             showIcon
-            className="mb-4"
+            className="mb-3 md:mb-4"
             closable
             onClose={() => setError(null)}
           />
@@ -108,7 +121,7 @@ const RegisterPage: React.FC = () => {
           name="register"
           onFinish={onFinish}
           layout="vertical"
-          size="large"
+          size={isMobile ? 'middle' : 'large'}
         >
           <Form.Item
             name="name"
@@ -160,15 +173,15 @@ const RegisterPage: React.FC = () => {
             />
           </Form.Item>
 
-          <Form.Item>
+          <Form.Item className="!mb-3">
             <Button type="primary" htmlType="submit" loading={loading} block>
               Ro'yxatdan o'tish
             </Button>
           </Form.Item>
 
           <div className="text-center">
-            <Text>Hisobingiz bormi? </Text>
-            <a onClick={() => navigate('/login')}>Kirish</a>
+            <Text className="text-xs md:text-sm">Hisobingiz bormi? </Text>
+            <a onClick={() => navigate('/login')} className="text-xs md:text-sm">Kirish</a>
           </div>
         </Form>
       </Card>

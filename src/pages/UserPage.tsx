@@ -1,6 +1,12 @@
 import { useState } from 'react';
-import { Layout, Menu, Typography } from 'antd';
-import { DashboardOutlined, LinkOutlined, TeamOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Layout, Menu, Typography, Button, Drawer, Grid } from 'antd';
+import { 
+  DashboardOutlined, 
+  LinkOutlined, 
+  TeamOutlined, 
+  LogoutOutlined,
+  MenuOutlined 
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 import UserDashboard from '../components/User/Dashboard';
@@ -8,12 +14,18 @@ import ReferralLink from '../components/User/ReferralLink';
 import ReferralList from '../components/User/ReferralList';
 
 const { Header, Sider, Content } = Layout;
-const { Title } = Typography;
+const { Title, Text } = Typography;
+const { useBreakpoint } = Grid;
 
 const UserPage: React.FC = () => {
   const [selectedKey, setSelectedKey] = useState('dashboard');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const user = authService.getCurrentUser();
+  const screens = useBreakpoint();
+
+  // Mobile: xs, sm | Desktop: md, lg, xl, xxl
+  const isMobile = !screens.md;
 
   const handleLogout = () => {
     authService.logout();
@@ -33,44 +45,105 @@ const UserPage: React.FC = () => {
     } else {
       setSelectedKey(key);
     }
+    setMobileMenuOpen(false);
   };
+
+  // Sidebar content - reusable for both desktop and mobile
+  const SidebarContent = () => (
+    <>
+      <div className="p-4 md:p-6 flex flex-col items-center border-b">
+        <div className="w-24 h-24 md:w-40 md:h-40 flex items-center justify-center mb-2 md:mb-3">
+          <img 
+            src="/images/logo.svg" 
+            alt="Logo" 
+            className="w-full h-full object-contain"
+          />
+        </div>
+        <Title level={5} className="!mb-0 text-center">My Dashboard</Title>
+      </div>
+      <Menu
+        mode="inline"
+        selectedKeys={[selectedKey]}
+        items={menuItems}
+        onClick={({ key }) => handleMenuClick(key)}
+        className="border-0"
+      />
+    </>
+  );
 
   return (
     <Layout className="min-h-screen">
-      <Sider theme="light" className="shadow-md" width={280}>
-        <div className="p-6 flex flex-col items-center border-b">
-          <div className="w-40 h-40 flex items-center justify-center mb-3">
-            <img 
-              src="/images/logo.svg" 
-              alt="Logo" 
-              className="w-full h-full object-contain"
-              style={{ maxWidth: '100%', maxHeight: '100%' }}
-            />
+      {/* Desktop Sidebar */}
+      {!isMobile && (
+        <Sider 
+          theme="light" 
+          className="shadow-md hidden md:block" 
+          width={260}
+          style={{ 
+            overflow: 'auto',
+            height: '100vh',
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            bottom: 0,
+          }}
+        >
+          <SidebarContent />
+        </Sider>
+      )}
+
+      {/* Mobile Drawer */}
+      <Drawer
+        title={null}
+        placement="left"
+        onClose={() => setMobileMenuOpen(false)}
+        open={mobileMenuOpen}
+        width={280}
+        bodyStyle={{ padding: 0 }}
+        className="md:hidden"
+      >
+        <SidebarContent />
+      </Drawer>
+
+      <Layout style={{ marginLeft: isMobile ? 0 : 260 }}>
+        <Header 
+          className="bg-white shadow-sm px-4 md:px-6 flex items-center justify-between"
+          style={{ 
+            position: 'sticky', 
+            top: 0, 
+            zIndex: 10,
+            height: 'auto',
+            minHeight: 64,
+            padding: '12px 16px'
+          }}
+        >
+          <div className="flex items-center gap-3">
+            {isMobile && (
+              <Button
+                type="text"
+                icon={<MenuOutlined />}
+                onClick={() => setMobileMenuOpen(true)}
+                size="large"
+              />
+            )}
+            <div className="truncate" style={{ maxWidth: isMobile ? 200 : 'none' }}>
+              <Title level={5} className="!mb-0">
+                Xush kelibsiz{!isMobile && `, ${user?.name}`}! 👋
+              </Title>
+              {isMobile && user?.name && (
+                <Text type="secondary" className="text-xs">{user.name}</Text>
+              )}
+            </div>
           </div>
-          <Title level={4} className="!mb-0 text-center">My Dashboard</Title>
-        </div>
-        <Menu
-          mode="inline"
-          selectedKeys={[selectedKey]}
-          items={menuItems}
-          onClick={({ key }) => handleMenuClick(key)}
-          className="border-0"
-        />
-      </Sider>
-      <Layout>
-        <Header className="bg-white shadow-sm px-6 flex items-center justify-between">
-          <Title level={4} className="!mb-0">
-            Xush kelibsiz, {user?.name}! 👋
-          </Title>
         </Header>
         <Content 
-          className="p-6"
+          className="p-3 md:p-6"
           style={{
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             minHeight: 'calc(100vh - 64px)'
           }}
         >
-          <div className="bg-white/95 backdrop-blur-sm rounded-lg p-6 shadow-lg">
+          <div className="bg-white/95 backdrop-blur-sm rounded-lg p-3 md:p-6 shadow-lg">
             {selectedKey === 'dashboard' && <UserDashboard />}
             {selectedKey === 'referral-link' && <ReferralLink />}
             {selectedKey === 'referrals' && <ReferralList />}

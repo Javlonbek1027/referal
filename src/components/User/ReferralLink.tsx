@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Card, Input, Button, Space, message, Typography, Statistic } from 'antd';
-import { CopyOutlined, WhatsAppOutlined, SendOutlined, MailOutlined, MessageOutlined } from '@ant-design/icons';
+import { Card, Input, Button, Space, message, Typography, Statistic, Grid, Flex } from 'antd';
+import { CopyOutlined, WhatsAppOutlined, SendOutlined, MailOutlined, MessageOutlined, CheckOutlined } from '@ant-design/icons';
 import type { User } from '../../types';
 import { authService } from '../../services/authService';
 
 const { Title, Text } = Typography;
+const { useBreakpoint } = Grid;
 
 const ReferralLink: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [copied, setCopied] = useState(false);
+  const screens = useBreakpoint();
+  const isMobile = !screens.md;
 
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
@@ -58,67 +61,99 @@ const ReferralLink: React.FC = () => {
 
   return (
     <div>
-      <Card className="mb-4">
-        <Title level={4}>Sizning referral linkingiz</Title>
-        <Text type="secondary" className="block mb-4">
+      <Card className="mb-3 md:mb-4">
+        <Title level={5} className="!mb-1 md:!mb-2">Sizning referral linkingiz</Title>
+        <Text type="secondary" className="block mb-3 md:mb-4 text-xs md:text-sm">
           Ushbu linkni do'stlaringizga yuboring. Ular ro'yxatdan o'tganda siz mukofot olasiz.
         </Text>
 
-        <Input.Group compact className="mb-4">
-          <Input
-            value={referralLink}
-            readOnly
-            style={{ width: 'calc(100% - 100px)' }}
-          />
-          <Button
-            type="primary"
-            icon={<CopyOutlined />}
-            onClick={handleCopy}
-          >
-            {copied ? 'Nusxalandi!' : 'Nusxalash'}
-          </Button>
-        </Input.Group>
+        {/* Link Input with Copy Button */}
+        <div className="mb-3 md:mb-4">
+          {isMobile ? (
+            <div className="space-y-2">
+              <Input
+                value={referralLink}
+                readOnly
+                className="text-xs"
+              />
+              <Button
+                type="primary"
+                icon={copied ? <CheckOutlined /> : <CopyOutlined />}
+                onClick={handleCopy}
+                block
+              >
+                {copied ? 'Nusxalandi!' : 'Linkni nusxalash'}
+              </Button>
+            </div>
+          ) : (
+            <Space.Compact style={{ width: '100%' }}>
+              <Input
+                value={referralLink}
+                readOnly
+                style={{ width: 'calc(100% - 120px)' }}
+              />
+              <Button
+                type="primary"
+                icon={copied ? <CheckOutlined /> : <CopyOutlined />}
+                onClick={handleCopy}
+                style={{ width: 120 }}
+              >
+                {copied ? 'Nusxalandi!' : 'Nusxalash'}
+              </Button>
+            </Space.Compact>
+          )}
+        </div>
 
-        <div className="mb-4">
-          <Text strong className="block mb-2">Ulashish:</Text>
-          <Space wrap>
+        {/* Share Buttons */}
+        <div>
+          <Text strong className="block mb-2 text-sm">Ulashish:</Text>
+          <Flex wrap="wrap" gap={8}>
             <Button
               icon={<WhatsAppOutlined />}
               onClick={shareViaWhatsApp}
               style={{ backgroundColor: '#25D366', borderColor: '#25D366', color: 'white' }}
+              size={isMobile ? 'middle' : 'large'}
             >
-              WhatsApp
+              {!isMobile && 'WhatsApp'}
             </Button>
             <Button
               icon={<SendOutlined />}
               onClick={shareViaTelegram}
               style={{ backgroundColor: '#0088cc', borderColor: '#0088cc', color: 'white' }}
+              size={isMobile ? 'middle' : 'large'}
             >
-              Telegram
+              {!isMobile && 'Telegram'}
             </Button>
             <Button
               icon={<MessageOutlined />}
               onClick={shareViaSMS}
+              size={isMobile ? 'middle' : 'large'}
             >
-              SMS
+              {!isMobile && 'SMS'}
             </Button>
             <Button
               icon={<MailOutlined />}
               onClick={shareViaEmail}
+              size={isMobile ? 'middle' : 'large'}
             >
-              Email
+              {!isMobile && 'Email'}
             </Button>
-          </Space>
+          </Flex>
         </div>
       </Card>
 
+      {/* Referral Status Card */}
       <Card>
         <Statistic
-          title="Referral holati"
+          title={<span className="text-xs md:text-sm">Referral holati</span>}
           value={user.referral_count}
           suffix={`/ ${user.referral_limit}`}
+          valueStyle={{ fontSize: isMobile ? 20 : 28 }}
         />
-        <Text type={remainingReferrals > 0 ? 'success' : 'danger'} className="block mt-2">
+        <Text 
+          type={remainingReferrals > 0 ? 'success' : 'danger'} 
+          className="block mt-2 text-xs md:text-sm"
+        >
           {remainingReferrals > 0
             ? `Yana ${remainingReferrals} ta odam taklif qilishingiz mumkin`
             : 'Referral limitingiz tugadi'}

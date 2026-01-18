@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Modal, Form, InputNumber, Alert, message, Spin } from 'antd';
+import { Modal, Form, InputNumber, Alert, message, Spin, Grid } from 'antd';
 import type { RewardSettings } from '../../types';
 import { rewardService } from '../../services/rewardService';
+
+const { useBreakpoint } = Grid;
 
 interface RewardSettingsModalProps {
   open: boolean;
@@ -13,6 +15,8 @@ const RewardSettingsModal: React.FC<RewardSettingsModalProps> = ({ open, onClose
   const [settings, setSettings] = useState<RewardSettings | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const screens = useBreakpoint();
+  const isMobile = !screens.sm;
 
   useEffect(() => {
     if (open) {
@@ -49,36 +53,39 @@ const RewardSettingsModal: React.FC<RewardSettingsModalProps> = ({ open, onClose
 
   return (
     <Modal
-      title="Mukofot sozlamalari"
+      title={<span className="text-sm md:text-base">Mukofot sozlamalari</span>}
       open={open}
       onOk={handleSubmit}
       onCancel={onClose}
       okText="Saqlash"
-      cancelText="Bekor qilish"
+      cancelText="Bekor"
       confirmLoading={saving}
+      width={isMobile ? '95%' : 420}
+      centered={isMobile}
     >
       {loading ? (
-        <div className="flex justify-center py-8">
+        <div className="flex justify-center py-6 md:py-8">
           <Spin />
         </div>
       ) : (
-        <Form form={form} layout="vertical" className="mt-4">
+        <Form form={form} layout="vertical" className="mt-3 md:mt-4" size={isMobile ? 'middle' : 'large'}>
           <Form.Item
             name="reward_per_referral"
-            label="Har bir referral uchun mukofot (UZS)"
+            label={<span className="text-xs md:text-sm">Har bir referral uchun mukofot (UZS)</span>}
             rules={[{ required: true, message: 'Mukofot summasini kiriting!' }]}
           >
             <InputNumber
               min={0}
               className="w-full"
+              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             />
           </Form.Item>
 
           {settings && (
             <Alert
-              message="Joriy sozlamalar"
+              message={<span className="text-xs md:text-sm font-medium">Joriy sozlamalar</span>}
               description={
-                <div className="text-sm">
+                <div className="text-xs md:text-sm">
                   <p>Joriy mukofot: {settings.reward_per_referral.toLocaleString()} UZS</p>
                   <p>Oxirgi yangilanish: {new Date(settings.updated_at).toLocaleString('uz-UZ')}</p>
                 </div>
