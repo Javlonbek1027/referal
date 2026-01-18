@@ -54,7 +54,7 @@ const UserPage: React.FC = () => {
       <div className="p-4 md:p-6 flex flex-col items-center border-b">
         <div className="w-24 h-24 md:w-40 md:h-40 flex items-center justify-center mb-2 md:mb-3">
           <img 
-            src="/images/logo.svg" 
+            src="/images/logo1.png" 
             alt="Logo" 
             className="w-full h-full object-contain"
           />
@@ -72,7 +72,7 @@ const UserPage: React.FC = () => {
   );
 
   return (
-    <Layout className="min-h-screen">
+    <Layout className="min-h-screen" style={{ background: 'transparent' }}>
       {/* Desktop Sidebar */}
       {!isMobile && (
         <Sider 
@@ -105,7 +105,7 @@ const UserPage: React.FC = () => {
         <SidebarContent />
       </Drawer>
 
-      <Layout style={{ marginLeft: isMobile ? 0 : 260 }}>
+      <Layout style={{ marginLeft: isMobile ? 0 : 260, background: 'transparent' }}>
         <Header 
           className="bg-white shadow-sm px-4 md:px-6 flex items-center justify-between"
           style={{ 
@@ -139,7 +139,7 @@ const UserPage: React.FC = () => {
         <Content 
           className="p-3 md:p-6"
           style={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'transparent',
             minHeight: 'calc(100vh - 64px)'
           }}
         >

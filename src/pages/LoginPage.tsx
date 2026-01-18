@@ -12,7 +12,7 @@ const LoginPage: React.FC = () => {
     <div 
       className="min-h-screen flex items-center justify-center p-4"
       style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        background: 'transparent'
       }}
     >
       <Card 
@@ -29,7 +29,7 @@ const LoginPage: React.FC = () => {
             }}
           >
             <img 
-              src="/images/logo.svg" 
+              src="/images/logo1.png" 
               alt="Logo" 
               className="w-full h-full object-contain"
             />
