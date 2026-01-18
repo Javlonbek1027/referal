@@ -130,7 +130,7 @@ const AdminPage: React.FC = () => {
         onClose={() => setMobileMenuOpen(false)}
         open={mobileMenuOpen}
         width={280}
-        bodyStyle={{ padding: 0 }}
+        styles={{ body: { padding: 0 } }}
         className="md:hidden"
       >
         <SidebarContent />

@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Drawer, Descriptions, Table, InputNumber, Button, Space, message, Divider, Grid, List, Typography, Tag } from 'antd';
-import { PlusOutlined, MinusOutlined, UserOutlined } from '@ant-design/icons';
+import { Drawer, Descriptions, Table, InputNumber, Button, Space, message, Divider, Grid, List, Typography, Tag, Card } from 'antd';
+import { PlusOutlined, MinusOutlined, UserOutlined, StarFilled } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import type { User, Referral } from '../../types';
 import { referralService } from '../../services/referralService';
 import { rewardService } from '../../services/rewardService';
 
 const { useBreakpoint } = Grid;
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 interface UserDetailsDrawerProps {
   open: boolean;
@@ -20,6 +20,27 @@ interface ReferralWithUser extends Referral {
   referral_name?: string;
   referral_phone?: string;
 }
+
+// Har 5 ta referral uchun 1 ta yulduzcha
+const getStarCount = (referralCount: number): number => {
+  return Math.floor(referralCount / 5);
+};
+
+// Yulduzchalarni render qilish
+const renderStars = (count: number) => {
+  if (count === 0) return null;
+  
+  const stars = [];
+  for (let i = 0; i < count; i++) {
+    stars.push(
+      <StarFilled 
+        key={i} 
+        style={{ color: '#fadb14', fontSize: 20, marginRight: 2 }} 
+      />
+    );
+  }
+  return stars;
+};
 
 const UserDetailsDrawer: React.FC<UserDetailsDrawerProps> = ({ open, user, onClose, onRefresh }) => {
   const [referrals, setReferrals] = useState<ReferralWithUser[]>([]);
@@ -101,14 +122,59 @@ const UserDetailsDrawer: React.FC<UserDetailsDrawerProps> = ({ open, user, onClo
 
   if (!user) return null;
 
+  const starCount = getStarCount(user.referral_count);
+  const nextStarAt = (starCount + 1) * 5;
+  const progressToNextStar = user.referral_count % 5;
+
   return (
     <Drawer
       title={<span className="text-sm md:text-base">{user.name}</span>}
       open={open}
       onClose={onClose}
       width={isMobile ? '100%' : 500}
-      bodyStyle={{ padding: isMobile ? 12 : 24 }}
+      styles={{ body: { padding: isMobile ? 12 : 24 } }}
     >
+      {/* Star Rating Card */}
+      <Card 
+        className="mb-4" 
+        style={{ 
+          background: 'linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%)',
+          border: '1px solid #ffe58f'
+        }}
+        styles={{ body: { padding: isMobile ? 12 : 16 } }}
+      >
+        <div className="text-center">
+          <div className="mb-2">
+            {starCount > 0 ? (
+              <div className="flex justify-center items-center gap-1">
+                {renderStars(starCount)}
+              </div>
+            ) : (
+              <Text type="secondary">Hali yulduzcha yo'q</Text>
+            )}
+          </div>
+          <Title level={5} className="!mb-1" style={{ color: '#d48806' }}>
+            {starCount} ta yulduzcha
+          </Title>
+          <Text type="secondary" className="text-xs">
+            {user.referral_count} ta referral qilgan
+          </Text>
+          {starCount < 20 && (
+            <div className="mt-2">
+              <Text className="text-xs text-orange-600">
+                Keyingi yulduzcha uchun yana {nextStarAt - user.referral_count} ta referral kerak
+              </Text>
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                <div 
+                  className="bg-yellow-400 h-2 rounded-full transition-all"
+                  style={{ width: `${(progressToNextStar / 5) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </Card>
+
       <Descriptions column={1} bordered size="small" labelStyle={{ fontSize: isMobile ? 12 : 14 }} contentStyle={{ fontSize: isMobile ? 12 : 14 }}>
         <Descriptions.Item label="Telefon">{user.phone}</Descriptions.Item>
         <Descriptions.Item label="Referrallar">{user.referral_count} / {user.referral_limit}</Descriptions.Item>
