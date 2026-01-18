@@ -1,30 +1,45 @@
-import { useState } from 'react';
-import { Layout, Menu, Typography, Button, Drawer, Grid } from 'antd';
+import { useState, useEffect } from 'react';
+import { Layout, Menu, Typography, Button, Drawer, Grid, Badge } from 'antd';
 import { 
   UserOutlined, 
   SettingOutlined, 
   TransactionOutlined, 
   LogoutOutlined,
-  MenuOutlined 
+  MenuOutlined,
+  TeamOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
+import { referralService } from '../services/referralService';
 import UserManagement from '../components/Admin/UserManagement';
 import RewardSettingsModal from '../components/Admin/RewardSettingsModal';
+import ReferralManagement from '../components/Admin/ReferralManagement';
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
 
 const AdminPage: React.FC = () => {
-  const [selectedKey, setSelectedKey] = useState('users');
+  const [selectedKey, setSelectedKey] = useState('referrals');
   const [rewardModalOpen, setRewardModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
   const navigate = useNavigate();
   const screens = useBreakpoint();
 
-  // Mobile: xs, sm | Desktop: md, lg, xl, xxl
   const isMobile = !screens.md;
+
+  useEffect(() => {
+    fetchPendingCount();
+    // Har 30 sekundda yangilash
+    const interval = setInterval(fetchPendingCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchPendingCount = async () => {
+    const count = await referralService.getPendingReferralsCount();
+    setPendingCount(count);
+  };
 
   const handleLogout = () => {
     authService.logout();
@@ -32,6 +47,15 @@ const AdminPage: React.FC = () => {
   };
 
   const menuItems = [
+    { 
+      key: 'referrals', 
+      icon: <TeamOutlined />, 
+      label: (
+        <Badge count={pendingCount} size="small" offset={[10, 0]}>
+          <span>Referrallar</span>
+        </Badge>
+      )
+    },
     { key: 'users', icon: <UserOutlined />, label: 'Foydalanuvchilar' },
     { key: 'rewards', icon: <SettingOutlined />, label: 'Mukofot sozlamalari' },
     { key: 'transactions', icon: <TransactionOutlined />, label: 'Tranzaksiyalar' },
@@ -51,13 +75,13 @@ const AdminPage: React.FC = () => {
 
   const getPageTitle = () => {
     switch (selectedKey) {
+      case 'referrals': return 'Referrallar boshqaruvi';
       case 'users': return 'Foydalanuvchilar boshqaruvi';
       case 'transactions': return 'Tranzaksiyalar';
       default: return 'Admin Panel';
     }
   };
 
-  // Sidebar content - reusable for both desktop and mobile
   const SidebarContent = () => (
     <>
       <div className="p-4 md:p-6 flex flex-col items-center border-b">
@@ -82,7 +106,6 @@ const AdminPage: React.FC = () => {
 
   return (
     <Layout className="min-h-screen">
-      {/* Desktop Sidebar */}
       {!isMobile && (
         <Sider 
           theme="light" 
@@ -101,7 +124,6 @@ const AdminPage: React.FC = () => {
         </Sider>
       )}
 
-      {/* Mobile Drawer */}
       <Drawer
         title={null}
         placement="left"
@@ -128,12 +150,14 @@ const AdminPage: React.FC = () => {
         >
           <div className="flex items-center gap-3">
             {isMobile && (
-              <Button
-                type="text"
-                icon={<MenuOutlined />}
-                onClick={() => setMobileMenuOpen(true)}
-                size="large"
-              />
+              <Badge count={pendingCount} size="small">
+                <Button
+                  type="text"
+                  icon={<MenuOutlined />}
+                  onClick={() => setMobileMenuOpen(true)}
+                  size="large"
+                />
+              </Badge>
             )}
             <Title level={5} className="!mb-0 truncate" style={{ maxWidth: isMobile ? 200 : 'none' }}>
               {getPageTitle()}
@@ -148,6 +172,7 @@ const AdminPage: React.FC = () => {
           }}
         >
           <div className="bg-white/95 backdrop-blur-sm rounded-lg p-3 md:p-6 shadow-lg">
+            {selectedKey === 'referrals' && <ReferralManagement />}
             {selectedKey === 'users' && <UserManagement />}
             {selectedKey === 'transactions' && <div>Tranzaksiyalar ro'yxati (Coming Soon)</div>}
           </div>

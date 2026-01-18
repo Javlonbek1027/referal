@@ -130,13 +130,14 @@ export const userService = {
         return null;
       }
 
-      // If referrer exists, create referral and update counts
+      // If referrer exists, create referral with PENDING status
+      // Pul DARHOL qo'shilmaydi - admin tasdiqlashi kerak!
       if (referrer) {
         // Get current reward settings
         const rewardSettings = await rewardService.getRewardSettings();
         const rewardAmount = rewardSettings?.reward_per_referral || 10000;
 
-        // Create referral record
+        // Create referral record with 'pending' status
         await referralService.createReferral(referrer.id, data.id, rewardAmount);
 
         // Update referrer's referral count
@@ -145,8 +146,8 @@ export const userService = {
           .update({ referral_count: referrer.referral_count + 1 })
           .eq('id', referrer.id);
 
-        // Add reward to referrer's balance
-        await rewardService.addBalance(referrer.id, rewardAmount, `Referral: ${userData.name}`);
+        // MUHIM: Pul qo'shilmaydi! Admin tasdiqlashi kerak
+        // await rewardService.addBalance(...) - BU OLIB TASHLANDI
       }
 
       return {

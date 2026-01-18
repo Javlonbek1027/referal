@@ -16,7 +16,17 @@ export interface Referral {
   referrer_id: string;
   referral_id: string;
   reward_amount: number;
+  status: 'pending' | 'approved' | 'rejected';
+  approved_at?: string;
+  approved_by?: string;
   created_at: string;
+}
+
+export interface ReferralWithUser extends Referral {
+  referral_name?: string;
+  referral_phone?: string;
+  referrer_name?: string;
+  referrer_phone?: string;
 }
 
 export interface RewardSettings {
