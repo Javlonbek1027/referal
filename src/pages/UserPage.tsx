@@ -5,13 +5,19 @@ import {
   LinkOutlined, 
   TeamOutlined, 
   LogoutOutlined,
-  MenuOutlined 
+  MenuOutlined,
+  ShoppingOutlined,
+  ShopOutlined,
+  FileTextOutlined,
+  BookOutlined,
+  PhoneOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 import UserDashboard from '../components/User/Dashboard';
 import ReferralLink from '../components/User/ReferralLink';
 import ReferralList from '../components/User/ReferralList';
+import ComingSoon from '../components/User/ComingSoon';
 
 const { Header, Sider, Content } = Layout;
 const { Title, Text } = Typography;
@@ -36,6 +42,11 @@ const UserPage: React.FC = () => {
     { key: 'dashboard', icon: <DashboardOutlined />, label: 'Dashboard' },
     { key: 'referral-link', icon: <LinkOutlined />, label: 'Referral Link' },
     { key: 'referrals', icon: <TeamOutlined />, label: 'Referrallarim' },
+    { key: 'products', icon: <ShoppingOutlined />, label: 'Mahsulotlar' },
+    { key: 'stores', icon: <ShopOutlined />, label: "Do'konlarimiz" },
+    { key: 'info', icon: <FileTextOutlined />, label: "Ma'lumotlar" },
+    { key: 'guides', icon: <BookOutlined />, label: "Qo'llanmalar" },
+    { key: 'contact', icon: <PhoneOutlined />, label: "Aloqa uchun" },
     { key: 'logout', icon: <LogoutOutlined />, label: 'Chiqish', danger: true },
   ];
 
@@ -147,6 +158,11 @@ const UserPage: React.FC = () => {
             {selectedKey === 'dashboard' && <UserDashboard />}
             {selectedKey === 'referral-link' && <ReferralLink />}
             {selectedKey === 'referrals' && <ReferralList />}
+            {selectedKey === 'products' && <ComingSoon title="Mahsulotlar" description="Tez orada" />}
+            {selectedKey === 'stores' && <ComingSoon title="Do'konlarimiz" description="Tez orada" />}
+            {selectedKey === 'info' && <ComingSoon title="Ma'lumotlar" description="Tez orada" />}
+            {selectedKey === 'guides' && <ComingSoon title="Qo'llanmalar" description="Tez orada" />}
+            {selectedKey === 'contact' && <ComingSoon title="Aloqa uchun" description="Tez orada" />}
           </div>
         </Content>
       </Layout>

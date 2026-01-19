@@ -88,22 +88,10 @@ const LoginForm: React.FC = () => {
         </Button>
       </Form.Item>
 
-      <div className="text-center mb-3">
+      <div className="text-center">
         <Text className="text-xs md:text-sm">Hisobingiz yo'qmi? </Text>
         <a onClick={() => navigate('/register')} className="text-xs md:text-sm">Ro'yxatdan o'tish</a>
       </div>
-
-      <Alert
-        message={<span className="text-xs md:text-sm font-medium">Demo ma'lumotlar</span>}
-        description={
-          <div className="text-xs md:text-sm">
-            <p><strong>Admin:</strong> +998901234567 / admin123</p>
-            <p><strong>User:</strong> +998901234568 / user123</p>
-          </div>
-        }
-        type="info"
-        showIcon
-      />
     </Form>
   );
 };
