@@ -18,6 +18,7 @@ import UserDashboard from '../components/User/Dashboard';
 import ReferralLink from '../components/User/ReferralLink';
 import ReferralList from '../components/User/ReferralList';
 import ComingSoon from '../components/User/ComingSoon';
+import CatalogViewer from '../components/User/CatalogViewer';
 
 const { Header, Sider, Content } = Layout;
 const { Title, Text } = Typography;
@@ -160,7 +161,7 @@ const UserPage: React.FC = () => {
             {selectedKey === 'referrals' && <ReferralList />}
             {selectedKey === 'products' && <ComingSoon title="Mahsulotlar" description="Tez orada" />}
             {selectedKey === 'stores' && <ComingSoon title="Do'konlarimiz" description="Tez orada" />}
-            {selectedKey === 'info' && <ComingSoon title="Ma'lumotlar" description="Tez orada" />}
+            {selectedKey === 'info' && <CatalogViewer />}
             {selectedKey === 'guides' && <ComingSoon title="Qo'llanmalar" description="Tez orada" />}
             {selectedKey === 'contact' && <ComingSoon title="Aloqa uchun" description="Tez orada" />}
           </div>

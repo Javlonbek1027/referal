@@ -2,6 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
+/* PDF Viewer Styles */
+.pdf-document-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.react-pdf__Document {
+  display: flex;
+  justify-content: center;
+}
+
+.react-pdf__Page {
+  max-width: 100%;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.react-pdf__Page:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.react-pdf__Page__canvas {
+  max-width: 100%;
+  height: auto !important;
+  border-radius: 8px;
+}
+
+.react-pdf__Page__textContent {
+  border-radius: 8px;
+}
+
+.react-pdf__Page__annotations {
+  border-radius: 8px;
+}
+
+/* Fullscreen mode styles */
+#pdf-container:fullscreen {
+  background: #1f1f1f;
+  padding: 20px;
+}
+
+#pdf-container:fullscreen .react-pdf__Page {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Smooth page transitions */
+.react-pdf__Page {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
